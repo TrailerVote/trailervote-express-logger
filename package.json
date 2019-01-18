@@ -1,6 +1,6 @@
 {
   "name": "@trailervote/express-logger",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Logger for express apps that can be passed around via locals, arguments or live bindings and allows for noop calling.",
   "main": "dist/logger.js",
   "repository": "https://github.com/TrailerVote/trailervote-express-logger",
@@ -26,6 +26,7 @@
     "tape": "^4.9.2",
     "ts-node": "^7.0.1",
     "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.17.0",
     "typescript": "^3.2.2"
   },
   "dependencies": {},
@@ -37,11 +38,11 @@
   "lint-staged": {
     "linters": {
       "*.{json,css,md}": [
-        "prettier --single-quote --no-semi --write",
+        "prettier --single-quote --no-semi --arrow-parens always --write",
         "git add"
       ],
-      "*{app,__{tests,mocks}__,test}/**/*.{mjs,js}": [
-        "prettier --single-quote --no-semi --write",
+      "*{src,app,__{tests,mocks}__,test,tests}/**/*.{mjs,js,jsx,ts,tsx}": [
+        "prettier --single-quote --no-semi --arrow-parens always --write",
         "git add"
       ]
     }

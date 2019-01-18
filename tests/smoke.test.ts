@@ -2,17 +2,18 @@ import test from 'tape'
 import { ConsoleLike, createLogger, LogLevels } from '../src/logger'
 
 type LogCall = [any, any[]]
-const calls: { [P in keyof ConsoleLike]: LogCall[] }  = {
+const calls: { [P in keyof ConsoleLike]: LogCall[] } = {
   debug: [],
   error: [],
   info: [],
   log: [],
   trace: [],
-  warn: [],
+  warn: []
 }
 
 function record(output: LogCall[]) {
-  return (message?: any, ...optionalParams: any[]) => output.push([message, optionalParams])
+  return (message?: any, ...optionalParams: any[]) =>
+    output.push([message, optionalParams])
 }
 
 const mockLogger: ConsoleLike = {
@@ -21,22 +22,30 @@ const mockLogger: ConsoleLike = {
   info: record(calls.info),
   log: record(calls.log),
   trace: record(calls.trace),
-  warn: record(calls.warn),
+  warn: record(calls.warn)
 }
 
 const debugLogger = createLogger(LogLevels.debug, mockLogger)
 const warnLogger = createLogger(LogLevels.warn, mockLogger)
 
-const expected: Array<keyof ConsoleLike> = ['debug', 'log', 'info', 'warn', 'error']
+const expected: Array<keyof ConsoleLike> = [
+  'debug',
+  'log',
+  'info',
+  'warn',
+  'error'
+]
 
 test('debuglogger', (t) => {
   expected.forEach((level) => {
-
     test('it logs ' + level, (p) => {
       calls[level].splice(0)
 
       debugLogger[level]('Something went horribly wrong')
-      p.assert(calls[level].length === 1, 'expected logger to be called at ' + level)
+      p.assert(
+        calls[level].length === 1,
+        'expected logger to be called at ' + level
+      )
       p.end()
     })
 
@@ -44,7 +53,10 @@ test('debuglogger', (t) => {
       calls[level].splice(0)
 
       debugLogger.lazy[level](() => 'Something went horribly wrong')
-      p.assert(calls[level].length === 1, 'expected logger to be called at ' + level)
+      p.assert(
+        calls[level].length === 1,
+        'expected logger to be called at ' + level
+      )
       p.end()
     })
   })
@@ -56,12 +68,14 @@ const notExpected: Array<keyof ConsoleLike> = ['debug', 'log', 'info']
 
 test('warnLogger', (t) => {
   notExpected.forEach((level) => {
-
     test('it logs ' + level + ' only if level is correct', (p) => {
       calls[level].splice(0)
 
       warnLogger[level]('Something went horribly wrong')
-      p.assert(calls[level].length === 0, 'expected logger not to be called at ' + level)
+      p.assert(
+        calls[level].length === 0,
+        'expected logger not to be called at ' + level
+      )
       p.end()
     })
 
@@ -73,7 +87,10 @@ test('warnLogger', (t) => {
         return 'nope'
       })
 
-      p.assert(calls[level].length === 0, 'expected logger not to be called at ' + level)
+      p.assert(
+        calls[level].length === 0,
+        'expected logger not to be called at ' + level
+      )
       p.end()
     })
   })

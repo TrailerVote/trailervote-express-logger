@@ -9,16 +9,18 @@ export const LogLevels = {
   warn: 40,
   error: 50,
 
-  none: 100,
+  none: 100
 }
 // tslint:enable:object-literal-sort-keys
 
 export type Logger = ConsoleLike & {
-  lazy: LazyLogger,
+  lazy: LazyLogger
 }
 
-type ResolvableLogArguments = () => (any | any[])
-type LazyLogger = { [P in keyof ConsoleLike]: (func: ResolvableLogArguments) => void }
+type ResolvableLogArguments = () => any | any[]
+type LazyLogger = {
+  [P in keyof ConsoleLike]: (func: ResolvableLogArguments) => void
+}
 
 export interface ConsoleLike {
   trace(message?: any, ...optionalParams: any[]): void
@@ -43,26 +45,32 @@ export function logger(res: Response): Logger {
 }
 
 function lazy(unwrapped: ConsoleLike): LazyLogger {
-  return (Object.keys(unwrapped) as Array<keyof ConsoleLike>).reduce((result, method) => {
-    const original = unwrapped[method]
-    result[method] = original === noop
-      ? noop
-      : (resolvable: ResolvableLogArguments) => {
-        const resolved = resolvable()
-        const [message, ...optionalParams] = Array.isArray(resolved)
-          ? resolved
-          : [resolved]
+  return (Object.keys(unwrapped) as Array<keyof ConsoleLike>).reduce(
+    (result, method) => {
+      const original = unwrapped[method]
+      result[method] =
+        original === noop
+          ? noop
+          : (resolvable: ResolvableLogArguments) => {
+              const resolved = resolvable()
+              const [message, ...optionalParams] = Array.isArray(resolved)
+                ? resolved
+                : [resolved]
 
-        original(message, ...optionalParams)
-      }
-    return result
-  } , {} as { [P in keyof LazyLogger]: LazyLogger[P] }) as LazyLogger
+              original(message, ...optionalParams)
+            }
+      return result
+    },
+    {} as { [P in keyof LazyLogger]: LazyLogger[P] }
+  ) as LazyLogger
 }
 
 type LogLevelName = keyof typeof LogLevels
 
 // tslint:disable-next-line:variable-name
-function noop(_message?: any, ..._optionalParams: any[]) { /* noop */ }
+function noop(_message?: any, ..._optionalParams: any[]) {
+  /* noop */
+}
 
 /**
  * Create a new Logger
@@ -74,11 +82,13 @@ function noop(_message?: any, ..._optionalParams: any[]) { /* noop */ }
  * @returns {Logger} Logger instance
  */
 export function createLogger(
-  level: (number | LogLevelName) = LogLevels[process.env.LOG_LEVEL as LogLevelName] || LogLevels.info,
+  level: number | LogLevelName = LogLevels[
+    process.env.LOG_LEVEL as LogLevelName
+  ] || LogLevels.info,
   output: ConsoleLike = console,
-  initialInfo: boolean = true,
+  initialInfo: boolean = true
 ): Logger {
-  const logLevel = LogLevels[level as (keyof typeof LogLevels)] || level
+  const logLevel = LogLevels[level as keyof typeof LogLevels] || level
 
   const consoleLike: ConsoleLike = {
     debug: logLevel <= LogLevels.debug ? output.debug : noop,
@@ -86,7 +96,7 @@ export function createLogger(
     info: logLevel <= LogLevels.info ? output.info : noop,
     log: logLevel <= LogLevels.log ? output.log : noop,
     trace: process.env.TRACE ? output.trace : noop,
-    warn: logLevel <= LogLevels.warn ? output.warn : noop,
+    warn: logLevel <= LogLevels.warn ? output.warn : noop
   }
 
   const instance: Logger = { ...consoleLike, lazy: lazy(consoleLike) }
@@ -98,7 +108,9 @@ export function createLogger(
   return instance
 }
 
-interface HeadersLookup { [K: string]: boolean }
+interface HeadersLookup {
+  [K: string]: boolean
+}
 
 const HEADERS_TO_LOG = [
   'accept',
@@ -113,12 +125,16 @@ const HEADERS_TO_LOG = [
   'if-range',
   'if-unmodified-since',
   'user-agent',
-  'warning',
-].reduce((result, header) => ({ ...result, [header]: true }), {} as HeadersLookup)
+  'warning'
+].reduce(
+  (result, header) => ({ ...result, [header]: true }),
+  {} as HeadersLookup
+)
 
-const HEADERS_TO_SCRUB = [
-  'authorization',
-].reduce((result, header) => ({ ...result, [header]: true }), {} as HeadersLookup)
+const HEADERS_TO_SCRUB = ['authorization'].reduce(
+  (result, header) => ({ ...result, [header]: true }),
+  {} as HeadersLookup
+)
 
 /**
  * Stringifies a request to make it loggable
@@ -129,20 +145,31 @@ const HEADERS_TO_SCRUB = [
  * @param [headersToScrub=HEADERS_TO_SCRUB] values which are scrubbed to <present> or <empty>
  * @returns {string} loggable request representation
  */
-export function requestToLog(req: Request, headersToLog = HEADERS_TO_LOG, headersToScrub = HEADERS_TO_SCRUB): string {
+export function requestToLog(
+  req: Request,
+  headersToLog = HEADERS_TO_LOG,
+  headersToScrub = HEADERS_TO_SCRUB
+): string {
   const url = `${req.protocol}://${req.get('host')}${req.originalUrl}`
-  const headers = (Object.keys(req.headers) as Array<keyof IncomingHttpHeaders>).reduce((result, header) => {
-    if (headersToLog[header]) {
-      const value = req.headers[header]
-      result[header] = headersToScrub[header] ? (value && '<present>' || '<empty>') : value
-    }
-    return result
-  }, {} as IncomingHttpHeaders)
+  const headers = (Object.keys(req.headers) as Array<
+    keyof IncomingHttpHeaders
+  >).reduce(
+    (result, header) => {
+      if (headersToLog[header]) {
+        const value = req.headers[header]
+        result[header] = headersToScrub[header]
+          ? (value && '<present>') || '<empty>'
+          : value
+      }
+      return result
+    },
+    {} as IncomingHttpHeaders
+  )
 
   const log = {
     headers,
     method: req.method,
-    url,
+    url
   }
 
   return JSON.stringify(log)
