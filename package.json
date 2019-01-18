@@ -1,0 +1,50 @@
+{
+  "name": "@trailervote/express-logger",
+  "version": "1.0.0",
+  "description": "Logger for express apps that can be passed around via locals, arguments or live bindings and allows for noop calling.",
+  "main": "dist/logger.js",
+  "repository": "https://github.com/TrailerVote/trailervote-express-logger",
+  "author": "Derk-Jan Karrenbeld <dj@trailervote.com>",
+  "license": "MIT",
+  "private": false,
+  "files": [
+    "README.md",
+    "/dist"
+  ],
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc",
+    "lint": "tslint --project tsconfig.json",
+    "test": "ts-node node_modules/tape/bin/tape tests/**/*.ts"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.0",
+    "@types/tape": "^4.2.33",
+    "husky": "^1.2.1",
+    "lint-staged": "^8.1.0",
+    "prettier": "^1.15.3",
+    "rimraf": "^2.6.3",
+    "tape": "^4.9.2",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.12.1",
+    "typescript": "^3.2.2"
+  },
+  "dependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "linters": {
+      "*.{json,css,md}": [
+        "prettier --single-quote --no-semi --write",
+        "git add"
+      ],
+      "*{app,__{tests,mocks}__,test}/**/*.{mjs,js}": [
+        "prettier --single-quote --no-semi --write",
+        "git add"
+      ]
+    }
+  }
+}
