@@ -6,7 +6,6 @@
   "repository": "https://github.com/TrailerVote/trailervote-express-logger",
   "author": "Derk-Jan Karrenbeld <dj@trailervote.com>",
   "license": "MIT",
-  "private": false,
   "files": [
     "README.md",
     "/dist"
