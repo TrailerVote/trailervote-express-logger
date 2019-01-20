@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import { IncomingHttpHeaders } from 'http'
 
 // tslint:disable:object-literal-sort-keys
@@ -33,14 +33,22 @@ export interface ConsoleLike {
 
 export const NONE_LOGGER = createLogger(LogLevels.none)
 
+export interface ResponseLike {
+  locals: {
+    requestTag?: string
+    requestTime?: [number, number]
+    logger?: Logger
+  }
+}
+
 /**
  * Extract logger from Response locals
  *
  * @export
- * @param {Response} res
+ * @param {ResponseLike} res
  * @returns {ConsoleLike}
  */
-export function logger(res: Response): Logger {
+export function logger(res: ResponseLike): Logger {
   return res.locals.logger || NONE_LOGGER
 }
 
@@ -180,10 +188,10 @@ export function requestToLog(
  *
  * @export
  * @param {Request} req
- * @param {Response} res
+ * @param {ResponseLike} res
  * @returns {string}
  */
-export function taggedRequestToLog(req: Request, res: Response): string {
+export function taggedRequestToLog(req: Request, res: ResponseLike): string {
   return `${res.locals.requestTag}: ${requestToLog(req)}`
 }
 
@@ -191,10 +199,10 @@ export function taggedRequestToLog(req: Request, res: Response): string {
  * Creates a prefix from the time it took since the request came in
  *
  * @export
- * @param {Response} res
+ * @param {ResponseLike} res
  * @returns {string|null}
  */
-export function responseTime(res: Response): string | null {
+export function responseTime(res?: ResponseLike): string | null {
   if (!res || !res.locals.requestTime) {
     return null
   }
