@@ -1,6 +1,6 @@
 {
   "name": "@trailervote/express-logger",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Logger for express apps that can be passed around via locals, arguments or live bindings and allows for noop calling.",
   "main": "dist/logger.js",
   "module": "dist/logger.js",
