@@ -15,7 +15,8 @@
     "prebuild": "rimraf dist",
     "build": "tsc",
     "lint": "tslint --project tsconfig.json",
-    "test": "node -r esm -r ts-node/register node_modules/tape/bin/tape tests/**/*.ts",
+    "pretest": "tsc --project tests/tsconfig.json",
+    "test": "node -r esm node_modules/tape/bin/tape tests/dist/**/*.test.js",
     "prepublish": "yarn test && yarn lint && yarn build"
   },
   "devDependencies": {
@@ -26,7 +27,6 @@
     "prettier": "^1.15.3",
     "rimraf": "^2.6.3",
     "tape": "^4.9.2",
-    "ts-node": "^7.0.1",
     "tslint": "^5.12.1",
     "tslint-config-prettier": "^1.17.0",
     "typescript": "^3.2.2"
