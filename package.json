@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@types/tape": "^4.2.33",
-    "esm": "^3.2.5",
+    "esm": "^3.2.17",
     "husky": "^1.2.1",
     "lint-staged": "^8.1.4",
     "prettier": "^1.16.4",
